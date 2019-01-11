@@ -1,0 +1,13 @@
+{
+  "name": "medgetinfo",
+  "version": "0.0.1",
+  "description": "get medicine info from data-index.co.jp",
+  "main": "index.js",
+  "repository": "https://github.com/wh1tecat-nya/medgetinfo",
+  "author": "wh1tecat <whitequeen0@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio-httpcli": "^0.7.3",
+    "fastify": "^1.13.3"
+  }
+}
