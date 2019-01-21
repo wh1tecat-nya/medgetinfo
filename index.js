@@ -14,6 +14,11 @@ fastify.get("/search", async (req, res) => {
 		.then(result => {
 			let arr = [];
 			let $ = result.$;
+
+			if ($("#ethicaldrugs_list > div.contents > div.mainColumn > div > section > div > dl > dd > span").text() === "検索条件に該当する薬品は見つかりませんでした。") {
+					res.send({});
+			}
+			
 			$("#ethicaldrugs_list > div.contents > div.mainColumn > div > section > div > dl")
 			.children()
 			.each((i, elem) => {
@@ -30,10 +35,11 @@ fastify.get("/search", async (req, res) => {
 					arr[key].medicineCode = medicineCode;
 					arr[key].medicineName = medicineName;
 				} else if($(elem).get(0).tagName === "dd") {
-					let spanChild = $(elem).find("span:nth-child(5) > div");
-					let medicinePrice = spanChild.eq(1).text();
+					let medicinePrice = $(elem).find("span:nth-child(5) > div").eq(1).text();
+					let medicineMaker = $(elem).find("span:nth-child(6) > div").eq(1).text();
 
-					arr[key].medicinePrice = medicinePrice;
+					arr[key].medicinePrice = parseFloat(medicinePrice);
+					arr[key].medicineMaker = medicineMaker;
 				}
 			});
 			return arr;
@@ -54,6 +60,11 @@ fastify.get("/search", async (req, res) => {
 			.then(result => {
 				let arr = [];
 				let $ = result.$;
+
+				if ($("#otc_list > div.contents > div.mainColumn > div > section > div > dl > dd > span").text() === "検索条件に該当する薬品は見つかりませんでした。") {
+					res.send({});
+				}
+				
 				$("#otc_list > div.contents > div.mainColumn > div > section > div > dl")
 				.children()
 				.each((i, elem) => {
@@ -62,8 +73,10 @@ fastify.get("/search", async (req, res) => {
 						arr[key] = {};
 					};
 					if ($(elem).get(0).tagName === "dt") {
+						let medicineCode = $(elem).find(".medicineName > a").url().replace("https://www.data-index.co.jp/search/otc_detail?touroku_code=", "").replace(/\&competition\_code=[A-Z]/g, "").replace("&search_page=otc", "");
 						let medicineName = $(elem).find(".medicineName > a").text();
-
+						
+						arr[key].medicineCode = medicineCode;
 						arr[key].medicineName = medicineName;
 					} else if ($(elem).get(0).tagName === "dd") {
 						let medicineMaker = $(elem).find("span:nth-child(1) > div:nth-child(2)").text().replace(/\s+/g, "");
